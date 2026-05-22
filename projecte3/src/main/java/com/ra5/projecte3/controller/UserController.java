@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.ra5.projecte3.dto.UserResponseDTO;
 import com.ra5.projecte3.model.Role;
 import com.ra5.projecte3.service.UserService;
+import com.ra5.projecte3.dto.UserRequestDTO;
 
 
 @RestController
@@ -47,5 +48,32 @@ public class UserController {
         UserResponseDTO user = userService.findByUsername(username);
         if (user == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(user);
+    }
+    @PostMapping
+public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO request) {
+    UserResponseDTO created = userService.create(request);
+    if (created == null) {
+        return ResponseEntity.status(409).build();
+    }
+    return ResponseEntity.status(201).body(created);
+}
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> update(@PathVariable String id,
+                                                @RequestBody UserRequestDTO request) {
+        UserResponseDTO updated = userService.update(id, request);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        boolean deleted = userService.delete(id);
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }
